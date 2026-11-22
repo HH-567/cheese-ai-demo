@@ -2,7 +2,7 @@
 (() => {
   const BASE = "/cheese-ai-demo";
   const originalFetch = window.fetch.bind(window);
-  const soundMode = new URLSearchParams(location.search).get("sound") === "1";
+  const soundMode = new URLSearchParams(location.search).get("mute") !== "1";
   let startupConfig;
   Object.defineProperty(window, "__DSH_STARTUP__", {
     configurable: true,
@@ -312,8 +312,14 @@
   const autoLogin = window.setInterval(() => {
     const root = document.querySelector("#dsh-startup-root");
     if (root) {
+      const gate = root.querySelector(".dsu-btn");
       const fill = root.querySelector(".qishi-demo-fill");
       const introPassword = root.querySelector('input[name="password"]');
+      if (soundMode && gate && gate.offsetParent !== null && gate.innerText.includes("授予访问权限") && !gate.dataset.autoGrant) {
+        gate.dataset.autoGrant = "1";
+        window.setTimeout(() => gate.click(), 1400);
+        return;
+      }
       if (fill && introPassword && !introPassword.dataset.autoLogin) {
         introPassword.dataset.autoLogin = "1";
         fill.click();
@@ -338,6 +344,46 @@
       window.setTimeout(() => submit.click(), 80);
     }
   }, 400);
+
+  // 大按钮：点击后才启动开场，满足浏览器对声音的手势要求
+  const overlay = document.createElement("div");
+  overlay.id = "demo-start";
+  overlay.innerHTML = `
+    <div class="demo-start-card">
+      <img src="/cheese-ai-demo/icons/cheese-app.png" alt="" class="demo-start-logo" />
+      <div class="demo-start-title">柒柿AI <span>Cheese AI</span></div>
+      <div class="demo-start-sub">会成长的问答库 · 黑客松演示</div>
+      <button type="button" class="demo-start-btn">▶ 点击以开始体验</button>
+      <div class="demo-start-note">建议开启声音 · 开场动画约 20 秒 · 无需输入账号密码</div>
+    </div>`;
+  const style = document.createElement("style");
+  style.textContent = `
+    #demo-start{position:fixed;inset:0;z-index:2147483647 !important;background:#0b0b0b;display:grid;place-items:center;transition:opacity .5s;}
+    #demo-start.starting{opacity:0;pointer-events:none;}
+    .demo-start-card{text-align:center;color:#f6f5ef;font-family:'Microsoft YaHei',sans-serif;}
+    .demo-start-logo{width:72px;height:72px;border-radius:18px;margin-bottom:18px;}
+    .demo-start-title{font-size:34px;font-weight:700;letter-spacing:2px;}
+    .demo-start-title span{font-size:13px;color:#9a968c;font-weight:500;margin-left:8px;letter-spacing:1px;}
+    .demo-start-sub{color:#b8b3a6;font-size:14px;margin-top:8px;}
+    .demo-start-btn{margin-top:34px;border:0;border-radius:999px;background:#ffd84a;color:#141414;font:600 16px 'Microsoft YaHei',sans-serif;padding:14px 30px;cursor:pointer;}
+    .demo-start-btn:hover{background:#ffe27a;}
+    .demo-start-note{color:#6f6b63;font-size:12px;margin-top:16px;}
+  `;
+  const mountOverlay = () => { document.head.append(style); document.body.append(overlay); };
+  if (document.body) mountOverlay(); else document.addEventListener("DOMContentLoaded", mountOverlay);
+  overlay.querySelector(".demo-start-btn").addEventListener("click", () => {
+    overlay.classList.add("starting");
+    const clickPlay = () => {
+      const play = [...document.querySelectorAll("#dsh-startup-root *")].find((el) => el.textContent?.trim() === "播放开场");
+      if (play) { play.click(); return true; }
+      return false;
+    };
+    if (!clickPlay()) {
+      const timer = window.setInterval(() => { if (clickPlay()) window.clearInterval(timer); }, 250);
+      window.setTimeout(() => window.clearInterval(timer), 8000);
+    }
+    window.setTimeout(() => overlay.remove(), 700);
+  });
 
   window.fetch = async (input, init = {}) => {
     const raw = typeof input === "string" ? input : input.url;
