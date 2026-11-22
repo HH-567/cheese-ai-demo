@@ -285,7 +285,7 @@
   };
 
   const banner = document.createElement("div");
-  banner.textContent = "静态演示 · 数据为样例，不连接后端；完整版含登录、治理与云端兜底";
+  banner.textContent = "静态演示 · 1,000+ 条问答样例，不连接后端；完整版含登录、治理与云端兜底";
   Object.assign(banner.style, {
     position: "fixed", right: "16px", bottom: "16px",
     background: "rgba(20,20,20,.86)", color: "#ffd84a", font: "12px/1.4 'Microsoft YaHei',sans-serif",
