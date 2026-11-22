@@ -296,10 +296,22 @@
 
   const autoLogin = window.setInterval(() => {
     const root = document.querySelector("#dsh-startup-root");
-    const gate = root?.querySelector(".dsu-btn");
-    if (gate && root.innerText.includes("授予访问权限") && !gate.dataset.autoGrant) {
-      gate.dataset.autoGrant = "1";
-      window.setTimeout(() => { const api = window.__DSH_STARTUP_API__; if (api && typeof api.finish === "function") api.finish(); else window.dispatchEvent(new Event("dsh-startup:done")); }, 600);
+    if (root) {
+      const btn = root.querySelector(".dsu-btn");
+      const text = root.innerText || "";
+      const fill = root.querySelector(".qishi-demo-fill");
+      const introPassword = root.querySelector('input[name="password"]');
+      if (btn && btn.offsetParent !== null && btn.innerText.includes("授予访问权限") && !btn.dataset.grantAuto) {
+        btn.dataset.grantAuto = "1";
+        window.setTimeout(() => btn.click(), 60);
+        return;
+      }
+      if (btn && fill && introPassword && !introPassword.dataset.autoLogin) {
+        introPassword.dataset.autoLogin = "1";
+        fill.click();
+        window.setTimeout(() => btn.click(), 600);
+        return;
+      }
       return;
     }
     const password = document.querySelector('input[name="password"]');
