@@ -2,6 +2,21 @@
 (() => {
   const BASE = "/cheese-ai-demo";
   const originalFetch = window.fetch.bind(window);
+  const soundMode = new URLSearchParams(location.search).get("sound") === "1";
+  let startupConfig;
+  Object.defineProperty(window, "__DSH_STARTUP__", {
+    configurable: true,
+    get() { return startupConfig; },
+    set(value) {
+      if (soundMode && value) {
+        value.sound = true;
+        value.voice = true;
+        value.requireInteraction = true;
+        value.waitForSoundGesture = true;
+      }
+      startupConfig = value;
+    },
+  });
   const cache = {};
   const json = (data, status = 200) =>
     new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json" } });
@@ -297,20 +312,14 @@
   const autoLogin = window.setInterval(() => {
     const root = document.querySelector("#dsh-startup-root");
     if (root) {
-      const btn = root.querySelector(".dsu-btn");
-      const text = root.innerText || "";
       const fill = root.querySelector(".qishi-demo-fill");
       const introPassword = root.querySelector('input[name="password"]');
-      if (btn && btn.offsetParent !== null && btn.innerText.includes("授予访问权限") && !btn.dataset.grantAuto) {
-        btn.dataset.grantAuto = "1";
-        window.setTimeout(() => btn.click(), 1800);
-        return;
-      }
-      if (btn && fill && introPassword && !introPassword.dataset.autoLogin) {
+      if (fill && introPassword && !introPassword.dataset.autoLogin) {
         introPassword.dataset.autoLogin = "1";
         fill.click();
-        window.setTimeout(() => btn.click(), 600);
-        return;
+        if (soundMode) {
+          window.setTimeout(() => root.querySelector(".dsu-btn")?.click(), 900);
+        }
       }
       return;
     }
