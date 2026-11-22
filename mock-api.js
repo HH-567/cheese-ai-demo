@@ -57,7 +57,8 @@
     const items = await getQa();
     const key = normalize(query);
     if (/鹈鹕|pelican/i.test(query) && /骑|bicycle|bike|单车/i.test(query)) {
-      const pelican = items.find((item) => item.tool === "pelican");
+      const chinese = /[\u3400-\u9fff]/.test(query);
+      const pelican = items.find((item) => item.tool === "pelican" && (chinese ? item.a.includes("画好了") : item.a.startsWith("Done")));
       if (pelican) return { item: pelican, kind: "tool", score: 1 };
     }
     let best = null;
@@ -369,8 +370,9 @@
     .demo-start-btn:hover{background:#ffe27a;}
     .demo-start-note{color:#6f6b63;font-size:12px;margin-top:16px;}
   `;
+  const showOverlay = !new URLSearchParams(location.search).get("skipintro") && new URLSearchParams(location.search).get("mute") !== "1";
   const mountOverlay = () => { document.head.append(style); document.body.append(overlay); };
-  if (document.body) mountOverlay(); else document.addEventListener("DOMContentLoaded", mountOverlay);
+  if (showOverlay) { if (document.body) mountOverlay(); else document.addEventListener("DOMContentLoaded", mountOverlay); }
   overlay.querySelector(".demo-start-btn").addEventListener("click", () => {
     overlay.classList.add("starting");
     const clickPlay = () => {
