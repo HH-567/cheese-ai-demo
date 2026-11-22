@@ -303,7 +303,7 @@
       const introPassword = root.querySelector('input[name="password"]');
       if (btn && btn.offsetParent !== null && btn.innerText.includes("授予访问权限") && !btn.dataset.grantAuto) {
         btn.dataset.grantAuto = "1";
-        window.setTimeout(() => btn.click(), 60);
+        window.setTimeout(() => btn.click(), 1800);
         return;
       }
       if (btn && fill && introPassword && !introPassword.dataset.autoLogin) {
