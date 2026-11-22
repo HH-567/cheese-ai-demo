@@ -299,7 +299,7 @@
     const gate = root?.querySelector(".dsu-btn");
     if (gate && root.innerText.includes("授予访问权限") && !gate.dataset.autoGrant) {
       gate.dataset.autoGrant = "1";
-      window.setTimeout(() => window.dispatchEvent(new Event("dsh-startup:done")), 300);
+      window.setTimeout(() => { const api = window.__DSH_STARTUP_API__; if (api && typeof api.finish === "function") api.finish(); else window.dispatchEvent(new Event("dsh-startup:done")); }, 600);
       return;
     }
     const password = document.querySelector('input[name="password"]');
@@ -314,7 +314,7 @@
       }
       setter.call(password, "demo1234");
       password.dispatchEvent(new Event("input", { bubbles: true }));
-      window.setTimeout(() => submit.click(), 500);
+      window.setTimeout(() => submit.click(), 80);
     }
   }, 400);
 
