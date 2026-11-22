@@ -172,7 +172,7 @@
         source: result ? "library" : "local", group_id: result?.item.q || null, version_id: null,
         matched_alias: result?.kind === "alias" ? query : null, match_type: result?.kind || null,
         cloud_calls: 0, first_token_ms: 0, total_ms: result ? 42 : 6, cost: 0, status: "done",
-        created_at: now(), meta: { query, trace: [] } },
+        created_at: now(), meta: { query, trace: [], cloud_calls: 0, source: result ? "library" : "local", match_type: result?.kind || null, matched_alias: result?.kind === "alias" ? query : null, group_scope: "shared", group_owner_id: "u-a", total_ms: result ? 42 : 6 } },
     );
     session.title = query.slice(0, 30);
   };
@@ -266,12 +266,12 @@
   const banner = document.createElement("div");
   banner.textContent = "静态演示 · 数据为样例，不连接后端；完整版含登录、治理与云端兜底";
   Object.assign(banner.style, {
-    position: "fixed", left: "16px", bottom: "16px",
+    position: "fixed", right: "16px", bottom: "16px",
     background: "rgba(20,20,20,.86)", color: "#ffd84a", font: "12px/1.4 'Microsoft YaHei',sans-serif",
     padding: "8px 14px", borderRadius: "999px", zIndex: 9999, pointerEvents: "none",
     boxShadow: "0 8px 24px rgba(0,0,0,.18)", whiteSpace: "nowrap", maxWidth: "calc(100vw - 32px)",
   });
-  window.addEventListener("DOMContentLoaded", () => document.body.append(banner));
+  window.addEventListener("DOMContentLoaded", () => { if (window.matchMedia("(min-width: 720px)").matches) document.body.append(banner); });
 
   window.fetch = async (input, init = {}) => {
     const raw = typeof input === "string" ? input : input.url;
