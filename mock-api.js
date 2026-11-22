@@ -58,6 +58,7 @@
   const now = () => new Date().toISOString();
   const demoSessionId = "ses_demo";
   let demoSession = null;
+  let currentUser = null;
   const extraSessions = [];
   const sessionStore = new Map();
 
@@ -180,9 +181,18 @@
   };
 
   const handle = async (path, method, init) => {
-    if (path === "/api/auth/me" && method === "GET") return json(await fixture("me"));
-    if (path === "/api/auth/login" && method === "POST") return json(await fixture("me"));
-    if (path === "/api/auth/logout") return json({ ok: true });
+    if (path === "/api/auth/me" && method === "GET") {
+      if (!currentUser) return json({ detail: "未登录" }, 401);
+      return json({ user: currentUser });
+    }
+    if (path === "/api/auth/login" && method === "POST") {
+      const body = init.body ? JSON.parse(init.body) : {};
+      const users = await fixture("demo-users");
+      const found = users.find((item) => item.id === body.user_id) || users[0];
+      currentUser = { ...found, verified: true };
+      return json({ user: currentUser });
+    }
+    if (path === "/api/auth/logout") { currentUser = null; return json({ ok: true }); }
     if (path === "/api/auth/options") return json(await fixture("auth-options"));
     if (path === "/api/demo/users") return json(await fixture("demo-users"));
     if (path === "/api/settings" && method === "GET") {
@@ -274,6 +284,30 @@
     boxShadow: "0 8px 24px rgba(0,0,0,.18)", whiteSpace: "nowrap", maxWidth: "calc(100vw - 32px)",
   });
   window.addEventListener("DOMContentLoaded", () => { if (window.matchMedia("(min-width: 720px)").matches) document.body.append(banner); });
+
+  const autoLogin = window.setInterval(() => {
+    const root = document.querySelector("#dsh-startup-root");
+    const gate = root?.querySelector(".dsu-btn");
+    if (gate && root.innerText.includes("授予访问权限") && !gate.dataset.autoGrant) {
+      gate.dataset.autoGrant = "1";
+      window.setTimeout(() => window.dispatchEvent(new Event("dsh-startup:done")), 3000);
+      return;
+    }
+    const password = document.querySelector('input[name="password"]');
+    const submit = document.querySelector(".qishi-submit");
+    if (password && submit && !password.dataset.autoLogin) {
+      password.dataset.autoLogin = "1";
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+      const account = document.querySelector('input[name="username"]');
+      if (account && !account.value) {
+        setter.call(account, "u-a");
+        account.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      setter.call(password, "demo1234");
+      password.dispatchEvent(new Event("input", { bubbles: true }));
+      window.setTimeout(() => submit.click(), 500);
+    }
+  }, 400);
 
   window.fetch = async (input, init = {}) => {
     const raw = typeof input === "string" ? input : input.url;
