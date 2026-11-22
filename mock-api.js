@@ -41,6 +41,10 @@
   const match = async (query) => {
     const items = await getQa();
     const key = normalize(query);
+    if (/鹈鹕|pelican/i.test(query) && /骑|bicycle|bike|单车/i.test(query)) {
+      const pelican = items.find((item) => item.tool === "pelican");
+      if (pelican) return { item: pelican, kind: "tool", score: 1 };
+    }
     let best = null;
     for (const item of items) {
       for (const [index, text] of [item.q, ...(item.v || [])].entries()) {
@@ -132,6 +136,11 @@
           { key: "answer", label: "云端兜底", state: "skip", detail: "静态演示版不调用模型" },
         ];
 
+    if (result?.kind === "tool") {
+      const step = trace.find((item) => item.key === "tool");
+      if (step) { step.state = "ok"; step.detail = "画图请求，本地生成整页 HTML"; }
+    }
+
     return new Response(new ReadableStream({
       async start(controller) {
         const send = (event, data) => controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
@@ -144,7 +153,7 @@
         }
         send("done", {
           content: answer,
-          source: result ? "library" : "local",
+          source: result ? (result.kind === "tool" ? "tool" : "library") : "local",
           message_id: messageId,
           trace,
           cloud_calls: 0,
@@ -172,7 +181,7 @@
         group_id: null, version_id: null, matched_alias: null, match_type: null, cloud_calls: 0,
         first_token_ms: 0, total_ms: 0, cost: 0, status: "done", created_at: now(), meta: {} },
       { id: `msg_a_${Date.now()}`, session_id: session.id, role: "assistant", content: answer,
-        source: result ? "library" : "local", group_id: result?.item.q || null, version_id: null,
+        source: result ? (result.kind === "tool" ? "tool" : "library") : "local", group_id: result?.item.q || null, version_id: null,
         matched_alias: result?.kind === "alias" ? query : null, match_type: result?.kind || null,
         cloud_calls: 0, first_token_ms: 0, total_ms: result ? 42 : 6, cost: 0, status: "done",
         created_at: now(), meta: { query, trace: [], cloud_calls: 0, source: result ? "library" : "local", match_type: result?.kind || null, matched_alias: result?.kind === "alias" ? query : null, group_scope: "shared", group_owner_id: "u-a", total_ms: result ? 42 : 6 } },
