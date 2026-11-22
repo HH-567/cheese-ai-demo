@@ -90,13 +90,15 @@
       .filter((item) => item.id !== session.id)
       .slice(0, 4)
       .map((item, index) => ({ ...item, title: ["补考没过怎么办？", "校历去哪儿查？", "宿舍报修电话是多少？", "你好"][index] || item.title }));
-    return [
+    const merged = [
       { id: session.id, owner_id: "u-a", title: session.title, scope: "shared",
         created_at: session.created_at, updated_at: now(), last_source: "library" },
       ...extraSessions.map((item) => ({ id: item.id, owner_id: item.owner_id, title: item.title,
         scope: item.scope, created_at: item.created_at, updated_at: now(), last_source: null })),
       ...others,
     ];
+    const seen = new Set();
+    return merged.filter((item) => !seen.has(item.title) && seen.add(item.title));
   };
 
   const streamAnswer = (query, result) => {
