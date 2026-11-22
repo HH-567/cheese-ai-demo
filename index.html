@@ -1,64 +1,17 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>柒柿AI · 会成长的问答库（演示）</title>
-<meta name="description" content="柒柿AI 静态演示：本地问答库命中，命中不出网。完整版含登录、审核治理与云端兜底。" />
-<link rel="icon" href="assets/cheese-app.png" />
-<link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-<header class="top">
-  <div class="brand">
-    <img src="assets/cheese-app.png" alt="柒柿AI" class="logo" />
-    <div>
-      <div class="name">柒柿AI <span>Cheese AI</span></div>
-      <div class="tag">会成长的问答库 · 静态演示</div>
-    </div>
-  </div>
-  <a class="repo" href="https://github.com/HH-567/cheese-ai" target="_blank" rel="noreferrer">完整项目 ↗</a>
-</header>
-
-<main>
-  <section class="stats">
-    <div><b>34,657</b><span>共享问题组</span></div>
-    <div><b>139,185</b><span>有效问法</span></div>
-    <div><b>0</b><span>命中时云端调用</span></div>
-    <div><b>&lt; 1 ms</b><span>本页匹配耗时</span></div>
-  </section>
-
-  <section class="chat" aria-live="polite">
-    <div class="messages" id="messages">
-      <div class="msg bot">
-        <div class="avatar">柒</div>
-        <div class="bubble">
-          <p>你好，我是柒柿AI。这里演示「先查本地问答库，命中就直接回答」。</p>
-          <p class="muted">本页内置 310 条精选问答（来自 3.4 万组演示库）；静态版没有云端兜底，未命中时会给你最接近的问题。</p>
-          <div class="chips" id="starterChips">
-            <button data-q="校园卡丢了怎么挂失？">校园卡丢了怎么挂失？</button>
-            <button data-q="食堂几点开门？">食堂几点开门？</button>
-            <button data-q="补考没过怎么办？">补考没过怎么办？</button>
-            <button data-q="校历去哪儿查？">校历去哪儿查？</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <form class="composer" id="composer" autocomplete="off">
-      <input id="input" type="text" placeholder="问一个校园问题，比如：校园卡丢了怎么挂失？" maxlength="120" />
-      <button type="submit" id="send">发送</button>
-    </form>
-  </section>
-
-  <p class="note">静态演示版：只展示本地命中与等价问法；完整版含登录、审核治理、云端兜底、文件/图片与网页搜索。</p>
-</main>
-
-<footer>
-  <span>柒柿AI · Cheese AI</span>
-  <span>命中不出网，未命中才请大模型</span>
-</footer>
-
-<script src="app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f7f4" />
+    <meta name="description" content="柒柿AI 通用聊天助手与可复用问答库" />
+    <link rel="icon" type="image/png" href="/cheese-ai-demo/icons/cheese-app.png" />
+    <title>柒柿AI · 通用助手</title>
+    <script src="/cheese-ai-demo/mock-api.js"></script>
+    <script type="module" crossorigin src="/cheese-ai-demo/assets/index-DBbLxTmN.js"></script>
+    <link rel="stylesheet" crossorigin href="/cheese-ai-demo/assets/index-D8ephrxB.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
