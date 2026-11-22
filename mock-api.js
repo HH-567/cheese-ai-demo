@@ -290,7 +290,7 @@
     const gate = root?.querySelector(".dsu-btn");
     if (gate && root.innerText.includes("授予访问权限") && !gate.dataset.autoGrant) {
       gate.dataset.autoGrant = "1";
-      window.setTimeout(() => window.dispatchEvent(new Event("dsh-startup:done")), 3000);
+      window.setTimeout(() => window.dispatchEvent(new Event("dsh-startup:done")), 300);
       return;
     }
     const password = document.querySelector('input[name="password"]');
