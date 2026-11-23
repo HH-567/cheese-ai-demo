@@ -29,3 +29,7 @@ python -m http.server 8090
 ```
 
 打开 <http://127.0.0.1:8090/cheese-ai-demo/>。
+
+## 许可证
+
+本仓库代码采用 MIT 许可证，见 `LICENSE`。演示数据与第三方校园资料的权利归原作者/学校所有，不在 MIT 授权范围内。
